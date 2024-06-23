@@ -18,6 +18,32 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+app.get('/api', (req, res) => {
+  res.json({ 
+    unix: new Date().getTime(),
+    utc: new Date().toUTCString(),
+   });
+});
+
+app.get('/api/:timestamp', (req, res) => {
+  const timestamp = req.params.timestamp;
+
+  if(!isNaN(Number(timestamp)) && timestamp.length === 13) {
+    return res.json({
+      unix: timestamp,
+      utc: new Date(Number(timestamp)).toUTCString()
+    });
+  }
+
+  if (new Date(timestamp).toDateString() !== 'Invalid Date') {
+    return res.json({
+      unix: new Date(timestamp).getTime(),
+      utc: new Date(timestamp).toUTCString(),
+    });
+  };
+
+  res.json({ error : 'Invalid Date' });
+})
 
 // your first API endpoint... 
 app.get("/api/hello", function (req, res) {
@@ -25,8 +51,7 @@ app.get("/api/hello", function (req, res) {
 });
 
 
-
 // Listen on port set in environment variable or default to 3000
-var listener = app.listen(process.env.PORT || 3000, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+var listener = app.listen(8080, function () {
+  console.log('Your app is listening on port ' + 8080);
 });
